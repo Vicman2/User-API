@@ -2,7 +2,7 @@
 const bcrypt = require('bcryptjs');
 
 // importing the mongoDb usermodel
-const UserModel = require('./userModel')
+const UserModel = require('../Model/userModel')
 
 
 class Student{
