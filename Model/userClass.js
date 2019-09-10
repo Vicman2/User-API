@@ -1,5 +1,7 @@
+//Third party module for hashing our password
 const bcrypt = require('bcryptjs');
 
+// importing the mongoDb usermodel
 const UserModel = require('./userModel')
 
 
@@ -18,10 +20,10 @@ class Student{
     }
 
     async save(){
-        const savedUser = this.findUser(this.email)
+        const savedUser = await this.findByEmail(this.email)
 
         if(savedUser){
-            return Promise.reject(new Error("User already exist"));
+            return Promise.reject("User already exist ");
         }
 
         const salt  = await bcrypt.genSalt(12);
@@ -34,17 +36,22 @@ class Student{
             password: hashedPassword
         })
 
-        result = await  user.save();
+         const result = await  user.save();
+        return result
     }
 
-    async logIn(user){
-        const userByEmail = await this.findByEmail(user.email);
-        const hashedPassword = userByEmail.password
-        const isTrue = await bcrypt.compare(user.password , hashedPassword);
-        if(isTrue){
-            return true
+    static async logIn(email, password){
+        const userByEmail =  await UserModel.findOne({email: email})
+        if(userByEmail){
+            const hashedPassword = userByEmail.password
+            const isTrue = await bcrypt.compare(password , hashedPassword);
+            if(isTrue){
+                return Promise.resolve(true)
+            }else{
+                return Promise.reject(false);
+            }
         }else{
-            return false;
+            return Promise.resolve("Invalid User, please signIn in order to use this database");
         }
     }
 }

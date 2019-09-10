@@ -1,16 +1,17 @@
+// Importing the JWT module
+const JWT = require('jsonwebtoken');
+
+// Importing the userClass model
 const User = require("../Model/userClass");
 
+// This is a middleware that takescare of the signUp /signUpUrl
 exports.createUser = (req, res, next) => {
-    const name = req.body.name;
-    const email = req.body.email;
-    const phone = req.body.phone;
-    const address = req.body.address;
-    const password = req.body.password;
-
-    const user = new User(name, email, phone, address, password);
+   const {name, email, phone, address, password} = req.body;
+    const user = new User(name, email, parseInt(phone), address, password);
     user
         .save()
         .then((value)=> {
+            console.log(value)
             res.status(400).send("Rgistration is a success !!") ;
         })
         .catch((err)=> {
@@ -18,19 +19,20 @@ exports.createUser = (req, res, next) => {
         })
 }
 
+// This is a middleware that takes care of the /login url
 exports.postLogin = (req, res, next)=>{
-    const name = req.body.name;
-    const email = req.body.pass;
-    const user = new User(name, email);
+    const token = JWT.sign({isLoggedIn : true}, 'myPrivateKey'); // creates a token which will be sent to the browser
+    const email = req.body.email;
+    const  password = req.body.password;
 
-    user.logIn(user)
+    User.logIn(email, password)
         .then(value => {
             if(value == true){
-                res.send("You are logged In")
+                res.send("You are logged In with this json web token " + token)
             }else{
-                res.send(" You are logged out")
+                res.send("You are logged out")
             }
         }).catch(err => {
             console.log(err)
-        })
+       })
 }
