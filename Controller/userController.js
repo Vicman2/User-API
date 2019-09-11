@@ -6,23 +6,23 @@ const User = require("../Services/userService");
 const userModel = require("../Model/userModel")
 
 // This is a middleware that takescare of the signUp /signUpUrl
-
-let isAdmin = false
 exports.authRole = (req, res, next) => {
     const {token} = req.headers;
     const valid = JWT.verify(token, 'mySecretKey');
     if(valid){
         userModel.findOne({email : valid.email})
             .then(value => {
-                isAdmin = value.isAdmin;
+                req.isAdmin = value.isAdmin;
+                next();  
             })
             .catch(err => {
                 console.log(err);
+                 next();  
             })
     }else{
         res.status(200).send({success: false, message: "Access Denied!!!"})
     }
-    next();   
+    
 }
 
 exports.createUser = (req, res, next) => {
@@ -58,6 +58,8 @@ exports.postLogin = (req, res, next)=>{
 
 exports.deleteUser = (req, res, next)=>{
     const {email} = req.body;
+    const {isAdmin} = req;
+    console.log(isAdmin)
     if(isAdmin){
         userModel.findOneAndDelete({email: email})
             .then(value => {
