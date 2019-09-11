@@ -27,7 +27,7 @@ app.use('/user', userRoute);
 
 
 // connection to our mongo db
-mongoose.connect('mongodb://localhost/users')
+mongoose.connect('mongodb://localhost/users', { useNewUrlParser: true })
   .then(() => {
     console.log("connected to mongodb");
   })

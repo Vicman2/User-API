@@ -6,12 +6,13 @@ const UserModel = require('../Model/userModel')
 
 
 class Student{
-    constructor(name, email, phoneNo, address, password){
+    constructor(name, email, phoneNo, address, password, isAdmin){
         this.name = name;
         this.email = email;
         this.phoneNo = phoneNo;
-        this.address = address
-        this.password = password
+        this.address = address;
+        this.password = password;
+        this.isAdmin = isAdmin;
     }
 
     async findByEmail(email){
@@ -51,7 +52,7 @@ class Student{
                 return Promise.reject(false);
             }
         }else{
-            return Promise.resolve("Invalid User, please signIn in order to use this database");
+            return Promise.resolve("Invalid User, please signIn in order to use this login");
         }
     }
 }
